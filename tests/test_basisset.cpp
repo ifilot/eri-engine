@@ -15,7 +15,7 @@ TEST_CASE("BasisSet can be populated from BSE JSON") {
 
     // --- Resolve basis file relative to executable ---
     const std::string basis_file =
-        eri::utils::executable_dir() + "/data/sto-3g.json";
+        eri::utils::executable_dir() + "/../data/basis/sto-3g.json";
 
     // --- Load basis ---
     eri::basis::BasisSet basis;

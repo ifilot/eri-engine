@@ -23,7 +23,7 @@ static eri::basis::BasisSet make_basis()
     auto mol = make_h2();
 
     // adjust path if you resolve relative to executable
-    basis.load_from_bse_json(eri::utils::executable_dir() + "/data/sto-3g.json", mol);
+    basis.load_from_bse_json(eri::utils::executable_dir() + "/../data/basis/sto-3g.json", mol);
     return basis;
 }
 
