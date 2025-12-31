@@ -5,6 +5,7 @@ test_sources = {
   'cgf':      'test_cgf.cpp',
   'overlap':  'test_overlap.cpp',
   'kinetic':  'test_kinetic.cpp',
+  'nuclear':  'test_nuclear.cpp',
   'basisset': 'test_basisset.cpp',
   'ops':      'test_ops.cpp',
 }

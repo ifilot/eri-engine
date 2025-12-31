@@ -11,6 +11,7 @@ sources += files(
     'one_electron/overlap_hellsing.cpp',
     'one_electron/overlap.cpp',
     'one_electron/kinetic.cpp',
+    'one_electron/nuclear.cpp',
 )
 
 inc = include_directories(

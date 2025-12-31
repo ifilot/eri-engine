@@ -12,4 +12,9 @@ enum class KineticMethod {
     Hellsing
 };
 
+enum class NuclearMethod {
+    Huzinaga,
+    Hellsing
+};
+
 } // namespace eri::enums
