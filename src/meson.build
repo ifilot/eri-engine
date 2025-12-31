@@ -1,5 +1,6 @@
 # general
 sources = files(
+    'basis/basisset.cpp',
     'basis/cgf.cpp',
     'engine/engine.cpp',
 )
@@ -17,10 +18,13 @@ inc = include_directories(
     '../include',
 )
 
+jsoncpp_dep = dependency('jsoncpp', required: true)
+
 eri_core = library(
     'eri-core',
     sources,
     include_directories: inc,
+    dependencies: [jsoncpp_dep],
     install: true
 )
 

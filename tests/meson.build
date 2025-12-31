@@ -1,10 +1,13 @@
 test_inc = include_directories('..', '../include')
 
+subdir('data')
+
 test_sources = {
   'engine':   'test_engine.cpp',
   'cgf':      'test_cgf.cpp',
   'overlap':  'test_overlap.cpp',
   'kinetic':  'test_kinetic.cpp',
+  'basisset': 'test_basisset.cpp',
 }
 
 foreach name, src : test_sources
