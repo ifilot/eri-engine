@@ -1,16 +1,12 @@
 #pragma once
 
-#include <eri/cgf.h>
+#include <eri/enums.h>
+#include <eri/basis/cgf.h>
 
 namespace eri::one_electron {
 
-enum class OverlapMethod {
-    Huzinaga,
-    Hellsing
-};
-
 double overlap(const eri::basis::CGF& a,
                const eri::basis::CGF& b,
-               OverlapMethod method = OverlapMethod::Huzinaga);
+               eri::enums::OverlapMethod method = eri::enums::OverlapMethod::Huzinaga);
 
 } // namespace eri::one_electron

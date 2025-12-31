@@ -1,14 +1,16 @@
 #include <eri/one_electron/overlap.h>
+#include <eri/one_electron/kinetic.h>
 
-#include "detail/overlap_huzinaga.h"
+#include "detail/kinetic_primitive.h"
 
-#include <cmath>
+#include <array>
 
 namespace eri::one_electron {
 
-double overlap_huzinaga(const eri::basis::CGF& a, const eri::basis::CGF& b) {
-    // Contracted overlap: sum_{p,q} (c_p N_p)(d_q M_q) * S_primitive(p,q)
-    double S = 0.0;
+double kinetic(const eri::basis::CGF& a,
+               const eri::basis::CGF& b,
+               eri::enums::KineticMethod method) {
+    double T = 0.0;
 
     const auto& A = a.ctr();
     const auto& B = b.ctr();
@@ -21,16 +23,17 @@ double overlap_huzinaga(const eri::basis::CGF& a, const eri::basis::CGF& b) {
             const double bq = b.exp()[q];
             const double dq = b.coef()[q] * b.norm()[q];
 
-            const double s_pq = eri::detail::overlap_primitive_huzinaga(
+            const double t_pq = eri::detail::kinetic_primitive(
                 a.lx(), a.ly(), a.lz(), A, ap,
-                b.lx(), b.ly(), b.lz(), B, bq
+                b.lx(), b.ly(), b.lz(), B, bq,
+                method
             );
 
-            S += cp * dq * s_pq;
+            T += cp * dq * t_pq;
         }
     }
 
-    return S;
+    return T;
 }
 
 } // namespace eri::one_electron

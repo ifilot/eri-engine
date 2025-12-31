@@ -1,7 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "third_party/doctest.h"
-
-#include <eri/cgf.h>
+#include "eri/basis/cgf.h"
 
 TEST_CASE("CGF construction and basic properties") {
     eri::basis::CGF a(

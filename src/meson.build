@@ -4,11 +4,12 @@ sources = files(
     'engine/engine.cpp',
 )
 
-# overlap integrals
+# one-electron integrals
 sources += files(
     'one_electron/overlap_huzinaga.cpp',
     'one_electron/overlap_hellsing.cpp',
     'one_electron/overlap.cpp',
+    'one_electron/kinetic.cpp',
 )
 
 inc = include_directories(

@@ -1,6 +1,7 @@
-#include "../../include/eri/cgf.h"
-#include "detail/normalization.h"
+#include "../../include/eri/basis/cgf.h"
 #include "../../include/eri/one_electron/overlap.h"
+
+#include "detail/normalization.h"
 
 eri::basis::CGF::CGF(int lx, int ly, int lz,
               std::array<double,3> ctr,
