@@ -12,12 +12,10 @@ inline double overlap_1d_huzinaga(int l1, int l2, double x1, double x2, double g
     const int imax = (l1 + l2) / 2;
 
     for (int i = 0; i <= imax; ++i) {
-        const int k = 2 * i;
-        const double df = (i == 0) ? 1.0 : eri::math::double_factorial(2*i - 1);
-
-        sm += eri::math::binomial_prefactor(k, l1, l2, x1, x2) *
-              df / std::pow(2.0 * gamma, i);
+        const double df = (i == 0) ? 1.0 : eri::math::double_factorial(2 * i - 1);
+        sm += eri::math::binomial_prefactor(2*i, l1, l2, x1, x2) * df / std::pow(2 * gamma, i);
     }
+
     return sm;
 }
 

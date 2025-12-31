@@ -2,7 +2,6 @@
 
 #include "detail/overlap_hellsing.h"
 
-#include <cmath>
 #include <array>
 
 namespace eri::one_electron {
@@ -14,19 +13,19 @@ double overlap_hellsing(const eri::basis::CGF& a, const eri::basis::CGF& b) {
     const auto& B = b.ctr();
 
     for (std::size_t p = 0; p < a.exp().size(); ++p) {
-        const double ap = a.exp()[p];
-        const double cp = a.coef()[p] * a.norm()[p];
+        const double a1 = a.exp()[p];
+        const double n1 = a.coef()[p] * a.norm()[p];
 
         for (std::size_t q = 0; q < b.exp().size(); ++q) {
-            const double bq = b.exp()[q];
-            const double dq = b.coef()[q] * b.norm()[q];
+            const double a2 = b.exp()[q];
+            const double n2 = b.coef()[q] * b.norm()[q];
 
             const double s_pq = eri::detail::overlap_primitive_hellsing(
-                a.lx(), a.ly(), a.lz(), A, ap,
-                b.lx(), b.ly(), b.lz(), B, bq
+                a.lx(), a.ly(), a.lz(), A, a1,
+                b.lx(), b.ly(), b.lz(), B, a2
             );
 
-            S += cp * dq * s_pq;
+            S += n1 * n2 * s_pq;
         }
     }
 
