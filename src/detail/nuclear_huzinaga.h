@@ -19,7 +19,7 @@ inline double A_term_huzinaga(
     double cp,
     double gamma)
 {
-    const int m = i - 2*r - 2*u;   // power of cp
+    const int m = i - 2*r - 2*u;
     if (m < 0) return 0.0;
 
     const double binom = eri::math::binomial_prefactor(i, l1, l2, pa, pb);
@@ -92,7 +92,7 @@ inline double nuclear_primitive_huzinaga(
         F[n] = eri::math::Fgamma(n, T);
     }
 
-    // Triple sum
+    // triple sum
     double s = 0.0;
     for (int i = 0; i < (int)Ax.size(); ++i)
         for (int j = 0; j < (int)Ay.size(); ++j)
