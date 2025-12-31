@@ -1,5 +1,7 @@
 # ERI-engine
 
+[![CI](https://github.com/ifilot/eri-engine/actions/workflows/build.yml/badge.svg)](https://github.com/ifilot/eri-engine/actions/workflows/build.yml)
+
 ## Compilation
 
 ```bash
