@@ -1,8 +1,9 @@
 test_inc = include_directories('..', '../include')
 
 test_sources = {
-  'engine': 'test_engine.cpp',
-  'cgf':    'test_cgf.cpp',
+  'engine':   'test_engine.cpp',
+  'cgf':      'test_cgf.cpp',
+  'overlap':  'test_overlap.cpp',
 }
 
 foreach name, src : test_sources

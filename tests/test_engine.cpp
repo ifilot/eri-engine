@@ -4,7 +4,7 @@
 #include <eri/engine/engine.h>
 
 TEST_CASE("Engine smoke test") {
-    eri::Engine eng;
+    eri::engine::Engine eng;
 
     CHECK_NOTHROW(eng.compute());
 }

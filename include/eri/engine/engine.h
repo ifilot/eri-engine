@@ -1,6 +1,6 @@
 #pragma once
 
-namespace eri {
+namespace eri::engine {
 
 class Engine {
 public:

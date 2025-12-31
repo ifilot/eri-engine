@@ -1,6 +1,6 @@
-#include "engine.h"
+#include "../../include/eri/engine/engine.h"
 
-namespace eri {
+namespace eri::engine {
 
 void Engine::compute() {
   // implementation

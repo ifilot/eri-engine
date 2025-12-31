@@ -3,7 +3,7 @@
 #include <vector>
 #include <array>
 
-namespace eri {
+namespace eri::basis {
 
 class CGF {
 private:
@@ -11,6 +11,7 @@ private:
     std::array<double,3> center_;
     std::vector<double> exp_;
     std::vector<double> coef_;
+    std::vector<double> norm_;
 
 public:
     CGF(int lx, int ly, int lz,
@@ -25,6 +26,12 @@ public:
     const std::array<double,3>& ctr() const noexcept { return center_; }
     const std::vector<double>& exp() const noexcept { return exp_; }
     const std::vector<double>& coef() const noexcept { return coef_; }
+    const std::vector<double>& norm() const noexcept { return norm_; }
+
+    double overlap() const;
+
+private:
+    void normalize();
 };
 
 }

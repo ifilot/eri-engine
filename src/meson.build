@@ -1,5 +1,14 @@
+# general
 sources = files(
+    'basis/cgf.cpp',
     'engine/engine.cpp',
+)
+
+# overlap integrals
+sources += files(
+    'one_electron/overlap_huzinaga.cpp',
+    'one_electron/overlap_hellsing.cpp',
+    'one_electron/overlap.cpp',
 )
 
 inc = include_directories(
