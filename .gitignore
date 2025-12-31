@@ -1,0 +1,77 @@
+# ================================
+# Build directories
+# ================================
+build/
+build-*/
+out/
+cmake-build-*/
+
+# Meson
+meson-private/
+meson-logs/
+meson-info/
+*.wrap
+
+# Ninja
+.ninja_log
+.ninja_deps
+
+# ================================
+# Compiled objects / binaries
+# ================================
+*.o
+*.obj
+*.lo
+*.a
+*.so
+*.so.*
+*.dylib
+*.exe
+*.out
+
+# ================================
+# Generated files
+# ================================
+# Generated version header
+version.h
+
+# ================================
+# Editor / IDE files
+# ================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ================================
+# Debug / profiling output
+# ================================
+core
+core.*
+vgcore.*
+gmon.out
+perf.data*
+callgrind.out.*
+
+# ================================
+# Coverage / testing
+# ================================
+*.gcda
+*.gcno
+*.gcov
+coverage/
+lcov.info
+
+# ================================
+# Packaging / install artifacts
+# ================================
+install/
+dist/
+
+# ================================
+# Python (just in case)
+# ================================
+__pycache__/
+*.pyc
