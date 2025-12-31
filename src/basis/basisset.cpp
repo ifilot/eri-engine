@@ -25,7 +25,7 @@ void BasisSet::load_from_bse_json(
 ) {
     std::ifstream in(filename);
     if (!in)
-        throw std::runtime_error("Failed to open basis file");
+        throw std::runtime_error("Failed to open basis file:" + filename);
 
     Json::Value root;
     in >> root;

@@ -1,30 +1,10 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "third_party/doctest.h"
 
+#include <eri/utils/executable_dir.h>
 #include <eri/basis/basisset.h>
 #include <eri/chem/molecule.h>
 #include <eri/one_electron/overlap.h>
-
-#include <unistd.h>
-#include <limits.h>
-
-#include <string>
-#include <stdexcept>
-
-// Resolve directory of the running executable (Linux)
-static std::string executable_dir()
-{
-    char buffer[PATH_MAX];
-    ssize_t len = ::readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
-
-    if (len == -1)
-        throw std::runtime_error("Failed to resolve /proc/self/exe");
-
-    buffer[len] = '\0';
-
-    std::string path(buffer);
-    return path.substr(0, path.find_last_of('/'));
-}
 
 TEST_CASE("BasisSet can be populated from BSE JSON") {
 
@@ -35,7 +15,7 @@ TEST_CASE("BasisSet can be populated from BSE JSON") {
 
     // --- Resolve basis file relative to executable ---
     const std::string basis_file =
-        executable_dir() + "/data/sto-3g.json";
+        eri::utils::executable_dir() + "/data/sto-3g.json";
 
     // --- Load basis ---
     eri::basis::BasisSet basis;

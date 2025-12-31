@@ -41,6 +41,30 @@ public:
         return cgfs_.end();
     }
 
+    auto cbegin() const noexcept {
+        return cgfs_.cbegin();
+    }
+
+    auto cend() const noexcept {
+        return cgfs_.cend();
+    }
+
+    auto rbegin() const noexcept {
+        return cgfs_.crbegin();
+    }
+
+    auto rend() const noexcept {
+        return cgfs_.crend();
+    }
+
+    auto crbegin() const noexcept {
+        return cgfs_.crbegin();
+    }
+
+    auto crend() const noexcept {
+        return cgfs_.crend();
+    }
+
     std::size_t size() const noexcept {
         return cgfs_.size();
     }

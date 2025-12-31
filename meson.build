@@ -23,5 +23,7 @@ configure_file(
     configuration: conf
 )
 
+subdir('data/basis')
 subdir('src')
 subdir('tests')
+subdir('benchmarks')
