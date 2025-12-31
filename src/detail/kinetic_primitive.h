@@ -6,13 +6,29 @@
 
 namespace eri::detail {
 
+/**
+ * @brief  Calculate primitive kinetic integral
+ * @note   
+ * @param  lx1: GTO1 nx
+ * @param  ly1: GTO1 ny
+ * @param  lz1: GTO1 nz
+ * @param  A: GTO1 center
+ * @param  a: GTO1 alpha
+ * @param  lx2: GTO2 nx
+ * @param  ly2: GTO2 ny
+ * @param  lz2: GTO2 nz
+ * @param  B: GTO2 center
+ * @param  b: GTO2 alpha
+ * @param  method: calculation method (Huzigana or Hellsing)
+ * @retval 
+ */
 inline double kinetic_primitive(
     int lx1, int ly1, int lz1, const std::array<double,3>& A, double a,
     int lx2, int ly2, int lz2, const std::array<double,3>& B, double b,
     eri::enums::KineticMethod method) {
     const int L2 = lx2 + ly2 + lz2;
 
-    // Explicit, safe mapping
+    // KineticMethod maps 1:1 to OverlapMethod
     const eri::enums::OverlapMethod overlap_method =
         (method == eri::enums::KineticMethod::Huzinaga)
             ? eri::enums::OverlapMethod::Huzinaga

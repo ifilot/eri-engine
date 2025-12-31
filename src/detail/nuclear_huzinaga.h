@@ -8,6 +8,7 @@
 #include "math/binomial_prefactor.h"
 #include "math/fgamma.h"
 #include "math/factorial.h"
+#include "math/ipow.h"
 
 namespace eri::detail {
 
@@ -31,8 +32,8 @@ inline double A_term_huzinaga(
     const double fu = eri::math::factorial(u);
     const double fm = eri::math::factorial(m);
 
-    const double cp_pow = (m == 0) ? 1.0 : std::pow(cp, m);
-    const double g_pow  = std::pow(0.25 / gamma, r + u);
+    const double cp_pow = (m == 0) ? 1.0 : eri::math::ipow(cp, m);
+    const double g_pow  = eri::math::ipow(0.25 / gamma, r + u);
 
     return sign_i * binom * sign_u * fi * cp_pow * g_pow / (fr * fu * fm);
 }

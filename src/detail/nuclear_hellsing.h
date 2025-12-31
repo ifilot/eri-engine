@@ -7,6 +7,8 @@
 #include "math/gaussian_product.h"
 #include "math/fgamma.h"
 #include "math/factorial.h"
+#include "math/ipow.h"
+#include "math/sign_pow.h"
 
 namespace eri::detail {
 
@@ -23,8 +25,7 @@ inline std::pair<
     std::vector<double> arr;
     std::vector<std::pair<int,int>> mu_u;
 
-    const double pre =
-        std::pow(-1.0, l1 + l2) * eri::math::factorial(l1) * eri::math::factorial(l2);
+    const double pre = eri::math::sign_pow(l1 + l2) * eri::math::factorial(l1) * eri::math::factorial(l2);
 
     for (int i1 = 0; i1 <= l1/2; ++i1) {
         for (int i2 = 0; i2 <= l2/2; ++i2) {
@@ -33,16 +34,16 @@ inline std::pair<
                     for (int r = 0; r <= (o1 + o2)/2; ++r) {
 
                         const double t1 =
-                            std::pow(-1.0, o2 + r) *
+                            eri::math::sign_pow(o2 + r) *
                             eri::math::factorial(o1 + o2) /
-                            ( std::pow(4.0, i1 + i2 + r) *
+                            ( eri::math::ipow(4.0, i1 + i2 + r) *
                               eri::math::factorial(i1) * eri::math::factorial(i2) *
                               eri::math::factorial(o1) * eri::math::factorial(o2) * eri::math::factorial(r) );
 
                         const double t2 =
-                            std::pow(alpha1, o2 - i1 - r) *
-                            std::pow(alpha2, o1 - i2 - r) *
-                            std::pow(x, o1 + o2 - 2*r) /
+                            eri::math::ipow(alpha1, o2 - i1 - r) *
+                            eri::math::ipow(alpha2, o1 - i2 - r) *
+                            eri::math::ipow(x, o1 + o2 - 2*r) /
                             ( eri::math::factorial(l1 - 2*i1 - o1) *
                               eri::math::factorial(l2 - 2*i2 - o2) *
                               eri::math::factorial(o1 + o2 - 2*r) );
@@ -52,13 +53,13 @@ inline std::pair<
 
                         for (int u = 0; u <= mu_x/2; ++u) {
                             const double t3 =
-                                std::pow(-1.0, u) *
+                                eri::math::sign_pow(u) *
                                 eri::math::factorial(mu_x) *
-                                std::pow(pcx, mu_x - 2*u) /
-                                ( std::pow(4.0, u) *
+                                eri::math::ipow(pcx, mu_x - 2*u) /
+                                ( eri::math::ipow(4.0, u) *
                                   eri::math::factorial(u) *
                                   eri::math::factorial(mu_x - 2*u) *
-                                  std::pow(gamma, o1 + o2 - r + u) );
+                                  eri::math::ipow(gamma, o1 + o2 - r + u) );
 
                             arr.push_back(pre * t1 * t2 * t3);
                             mu_u.emplace_back(mu_x, u);

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <array>
+#include <stdexcept>
 
 namespace eri::chem {
 
@@ -21,6 +22,52 @@ public:
 
     const std::vector<Atom>& atoms() const noexcept {
         return atoms_;
+    }
+
+    const auto& operator[](std::size_t i) const noexcept {
+        return atoms_[i];
+    }
+
+    const auto& at(std::size_t i) const {
+        if (i >= atoms_.size())
+            throw std::out_of_range("BasisSet::at: index out of range");
+        return atoms_[i];
+    }
+
+    auto begin() const noexcept {
+        return atoms_.begin();
+    }
+
+    auto end() const noexcept {
+        return atoms_.end();
+    }
+
+    auto cbegin() const noexcept {
+        return atoms_.cbegin();
+    }
+
+    auto cend() const noexcept {
+        return atoms_.cend();
+    }
+
+    auto rbegin() const noexcept {
+        return atoms_.crbegin();
+    }
+
+    auto rend() const noexcept {
+        return atoms_.crend();
+    }
+
+    auto crbegin() const noexcept {
+        return atoms_.crbegin();
+    }
+
+    auto crend() const noexcept {
+        return atoms_.crend();
+    }
+
+    std::size_t size() const noexcept {
+        return atoms_.size();
     }
 };
 

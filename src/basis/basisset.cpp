@@ -7,6 +7,12 @@
 
 namespace eri::basis {
 
+/**
+ * @brief  Autogenerates angular momentum values
+ * @note   
+ * @param  l: angular momentum sum (0->s, 1->p, 2->d, etc)
+ * @retval Angular momenta values
+ */
 static std::vector<std::array<int,3>>
 cartesian_angular_momenta(int l)
 {
@@ -19,6 +25,13 @@ cartesian_angular_momenta(int l)
     return am;
 }
 
+/**
+ * @brief  Construct basis set from .json file
+ * @note   Uses Basis Set Exchange standard
+ * @param  filename: basis set file
+ * @param  mol: Molecule
+ * @retval None
+ */
 void BasisSet::load_from_bse_json(
     const std::string& filename,
     const eri::chem::Molecule& mol

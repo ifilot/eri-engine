@@ -4,7 +4,8 @@
 #include <eri/chem/molecule.h>
 #include <eri/basis/basisset.h>
 #include <eri/one_electron/overlap.h>
-#include <eri/math/dense_square_matrix.h>
+#include <eri/math/matrix_builder.h>
+#include <eri/ops/ops.h>
 #include <eri/utils/executable_dir.h>
 
 static eri::chem::Molecule make_h2o()
@@ -116,44 +117,50 @@ TEST_CASE("Overlap p-type orthogonality (p_x | p_y)") {
     CHECK(std::abs(S) < 1e-12);
 }
 
-TEST_CASE("Full overlap matrix for H2O / STO-3G (golden reference)") {
+const std::array<std::array<double, 7>, 7> h2o_overlap = {{
+    //  O(1s)        O(2s)        O(2px)       O(2py)       O(2pz)       H1(1s)        H2(1s)
+    {{ 1.00000000,  0.23670400,  0.00000000,  8.60875e-18, 0.00000000,  0.0384367,   0.0384367 }},
+    {{ 0.23670400,  1.00000000,  0.00000000, -2.46745e-17,0.00000000,  0.386337,    0.386337  }},
+    {{ 0.00000000,  0.00000000,  1.00000000,  0.00000000, 0.00000000,  0.268493,   -0.268493  }},
+    {{ 8.60875e-18,-2.46745e-17, 0.00000000,  1.00000000, 0.00000000,  0.209869,    0.209869  }},
+    {{ 0.00000000,  0.00000000,  0.00000000,  0.00000000, 1.00000000,  0.00000000,  0.00000000}},
+    {{ 0.0384367,   0.386337,    0.268493,    0.209869,    0.00000000,  1.00000000,  0.181995  }},
+    {{ 0.0384367,   0.386337,   -0.268493,    0.209869,    0.00000000,  0.181995,    1.00000000}}
+}};
+
+TEST_CASE("Full overlap matrix for H2O / STO-3G (Huzinaga)") {
     auto basis = make_basis_h2o();
     const std::size_t n = basis.size();
     REQUIRE(n == 7);
 
-    eri::math::DenseSquareMatrix S(n);
-
-    // --- build overlap matrix ---
-    for (std::size_t i = 0; i < n; ++i) {
-        for (std::size_t j = 0; j <= i; ++j) {
-            const double v = eri::one_electron::overlap(basis[i], basis[j]);
-            S(i,j) = v;
-            S(j,i) = v;
-        }
-    }
-
-    // --- golden reference (row-major) ---
-    const std::array<std::array<double, 7>, 7> ref = {{
-        //  O(1s)        O(2s)        O(2px)       O(2py)       O(2pz)       H1(1s)        H2(1s)
-        {{ 1.00000000,  0.23670400,  0.00000000,  8.60875e-18, 0.00000000,  0.0384367,   0.0384367 }},
-        {{ 0.23670400,  1.00000000,  0.00000000, -2.46745e-17,0.00000000,  0.386337,    0.386337  }},
-        {{ 0.00000000,  0.00000000,  1.00000000,  0.00000000, 0.00000000,  0.268493,   -0.268493  }},
-        {{ 8.60875e-18,-2.46745e-17, 0.00000000,  1.00000000, 0.00000000,  0.209869,    0.209869  }},
-        {{ 0.00000000,  0.00000000,  0.00000000,  0.00000000, 1.00000000,  0.00000000,  0.00000000}},
-        {{ 0.0384367,   0.386337,    0.268493,    0.209869,    0.00000000,  1.00000000,  0.181995  }},
-        {{ 0.0384367,   0.386337,   -0.268493,    0.209869,    0.00000000,  0.181995,    1.00000000}}
-    }};
-
-
-    // --- full matrix comparison ---
+    const auto S = eri::math::build_symmetric_matrix<eri::ops::OverlapHuzinaga>(basis);
     constexpr double eps = 1e-5;
 
     for (std::size_t i = 0; i < n; ++i) {
         for (std::size_t j = 0; j < n; ++j) {
             CHECK_MESSAGE(
-                S(i,j) == doctest::Approx(ref[i][j]).epsilon(eps),
+                S(i,j) == doctest::Approx(h2o_overlap[i][j]).epsilon(eps),
                 "Mismatch at (" << i << "," << j << "): "
-                << S(i,j) << " vs " << ref[i][j]
+                << S(i,j) << " vs " << h2o_overlap[i][j]
+            );
+        }
+    }
+}
+
+TEST_CASE("Full overlap matrix for H2O / STO-3G (Hellsing)") {
+    auto basis = make_basis_h2o();
+    const std::size_t n = basis.size();
+    REQUIRE(n == 7);
+
+    const auto S = eri::math::build_symmetric_matrix<eri::ops::OverlapHellsing>(basis);
+    constexpr double eps = 1e-5;
+
+    for (std::size_t i = 0; i < n; ++i) {
+        for (std::size_t j = 0; j < n; ++j) {
+            CHECK_MESSAGE(
+                S(i,j) == doctest::Approx(h2o_overlap[i][j]).epsilon(eps),
+                "Mismatch at (" << i << "," << j << "): "
+                << S(i,j) << " vs " << h2o_overlap[i][j]
             );
         }
     }

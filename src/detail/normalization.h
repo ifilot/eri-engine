@@ -5,6 +5,15 @@
 
 namespace eri::detail {
 
+/**
+ * @brief  Calculate normalization constant of GTO
+ * @note   
+ * @param  lx: angular momentum x-direction
+ * @param  ly: angular momentum y-direction
+ * @param  lz: angular momentum z-direction
+ * @param  alpha: alpha value
+ * @retval 
+ */
 double primitive_norm(int lx, int ly, int lz, double alpha) noexcept {
     const int L = lx + ly + lz;
 
