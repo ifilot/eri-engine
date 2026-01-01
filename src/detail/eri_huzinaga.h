@@ -116,7 +116,7 @@ inline std::vector<double> B_array_huzinaga(
 }
 
 // Primitive ERI (ab|cd) port of Python _repulsion
-inline double repulsion_primitive_huzinaga(
+inline double eri_primitive_huzinaga(
     int lx1, int ly1, int lz1, const std::array<double,3>& A, double a,
     int lx2, int ly2, int lz2, const std::array<double,3>& B, double b,
     int lx3, int ly3, int lz3, const std::array<double,3>& C, double c,

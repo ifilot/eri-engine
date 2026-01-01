@@ -8,6 +8,7 @@ test_sources = {
   'nuclear':  'test_nuclear.cpp',
   'basisset': 'test_basisset.cpp',
   'ops':      'test_ops.cpp',
+  'eri':      'test_eri.cpp',
 }
 
 foreach name, src : test_sources

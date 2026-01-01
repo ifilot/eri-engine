@@ -1,21 +1,54 @@
-#include <eri/one_electron/overlap.h>
+#include <eri/two_electron/eri.h>
 
-namespace eri::one_electron {
+#include "detail/eri_primitive.h"
 
-// forward declarations
-double overlap_huzinaga(const eri::basis::CGF& a, const eri::basis::CGF& b, const eri::basis::CGF& c, const eri::basis::CGF& d);
-double overlap_hellsing(const eri::basis::CGF& a, const eri::basis::CGF& b, const eri::basis::CGF& c, const eri::basis::CGF& d);
+#include <array>
 
-double overlap(const eri::basis::CGF& a, const eri::basis::CGF& b, , const eri::basis::CGF& c, const eri::basis::CGF& d, eri::enums::ERIMethod method) {
-    // Dispatch lives here for now (we'll forward to Hellsing once implemented)
-    switch (method) {
-        case eri::enums::ERIMethod::Huzinaga:
-            return eri_huzinaga(a, b);
-        case eri::enums::ERIMethod::Hellsing:
-            return eri_hellsing(a, b);
-        default:
-            __builtin_unreachable();
+namespace eri::two_electron {
+
+double eri(const eri::basis::CGF& a,
+           const eri::basis::CGF& b,
+           const eri::basis::CGF& c,
+           const eri::basis::CGF& d,
+           eri::enums::ERIMethod method) {
+    double T = 0.0;
+
+    const auto& A = a.ctr();
+    const auto& B = b.ctr();
+    const auto& C = c.ctr();
+    const auto& D = d.ctr();
+
+    for (std::size_t p = 0; p < a.exp().size(); ++p) {
+        const double ap = a.exp()[p];
+        const double ac = a.coef()[p] * a.norm()[p];
+
+        for (std::size_t q = 0; q < b.exp().size(); ++q) {
+            const double bp = b.exp()[q];
+            const double bc = b.coef()[q] * b.norm()[q];
+
+            for (std::size_t r = 0; r < c.exp().size(); ++r) {
+                const double cp = c.exp()[r];
+                const double cc = c.coef()[r] * c.norm()[r];
+
+                for (std::size_t s = 0; s < d.exp().size(); ++s) {
+                    const double dp = d.exp()[s];
+                    const double dc = d.coef()[s] * d.norm()[s];
+
+                    const double t = eri::detail::eri_primitive(
+                        a.lx(), a.ly(), a.lz(), A, ap,
+                        b.lx(), b.ly(), b.lz(), B, bp,
+                        c.lx(), c.ly(), c.lz(), C, cp,
+                        d.lx(), d.ly(), d.lz(), D, dp,
+                        method
+                    );
+
+                    T += ac * bc * cc * dc * t;
+                }
+            }
+        }
     }
+
+    return T;
 }
 
-} // namespace: eri::one_electron
+} // namespace eri::two_electron

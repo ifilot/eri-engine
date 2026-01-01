@@ -10,6 +10,7 @@ sources += files(
     'one_electron/overlap.cpp',
     'one_electron/kinetic.cpp',
     'one_electron/nuclear.cpp',
+    'two_electron/eri.cpp',
 )
 
 inc = include_directories(
