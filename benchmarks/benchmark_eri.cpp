@@ -33,6 +33,7 @@ static eri::basis::BasisSet make_basis() {
 
 static void BM_ERI_Huzinaga(benchmark::State& state) {
     static eri::basis::BasisSet basis = make_basis();
+    eri::math::init_Fgamma_interp_table(4);
 
     for (auto _ : state) {
         auto tetensor = eri::math::build_eri_tensor<eri::ops::ERIHuzinaga>(basis);
@@ -43,6 +44,7 @@ static void BM_ERI_Huzinaga(benchmark::State& state) {
 
 static void BM_ERI_Hellsing(benchmark::State& state) {
     static eri::basis::BasisSet basis = make_basis();
+    eri::math::init_Fgamma_interp_table(4);
 
     for (auto _ : state) {
         auto tetensor = eri::math::build_eri_tensor<eri::ops::ERIHellsing>(basis);

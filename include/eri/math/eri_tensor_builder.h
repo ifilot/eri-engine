@@ -6,6 +6,7 @@
 #include <eri/math/symmetric_eri_tensor.h>
 #include <eri/two_electron/eri.h>
 #include <eri/two_electron/eri_index.h>
+#include <eri/math/fgamma_interpolation.h>
 
 namespace eri::math {
 
@@ -17,6 +18,15 @@ template <typename Operator>
 SymmetricERITensor build_eri_tensor(const basis::BasisSet& basis)
 {
     const std::size_t n = basis.size();
+
+    // build Fgamma interpolation cache
+    int lmax = 0;
+    for (const auto& shell : basis) {
+        lmax = std::max(lmax, shell.lx() + shell.ly() + shell.lz());
+    }
+    eri::math::init_Fgamma_interp_table(4);
+
+    // initialize Tensor object
     SymmetricERITensor eri(n);
 
     const std::size_t npairs = n * (n + 1) / 2;

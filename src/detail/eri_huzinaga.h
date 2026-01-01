@@ -7,7 +7,7 @@
 
 #include "math/gaussian_product.h"
 #include "math/binomial_prefactor.h"
-#include "math/fgamma_block.h"
+#include "math/fgamma_interpolation.h"
 #include "math/factorial.h"
 #include "math/ipow.h"
 #include "math/sign_pow.h"
@@ -146,9 +146,9 @@ inline double eri_primitive_huzinaga(
 
     // build Fgamma block
     if (nu_max == 0) {  // fast: no recurrence needed
-         F[0] = eri::math::Fgamma(0, T);
+         F[0] = eri::math::Fgamma_interp(0, T);
     } else {
-        eri::math::Fgamma_block(nu_max, T, F.data());
+        eri::math::Fgamma_block_interp(nu_max, T, F.data());
     }
 
     // evaluate triple-sum

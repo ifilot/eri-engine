@@ -5,7 +5,7 @@
 #include <cmath>
 
 #include "math/gaussian_product.h"
-#include "math/fgamma_block.h"
+#include "math/fgamma_interpolation.h"
 #include "math/factorial.h"
 #include "math/ipow.h"
 #include "math/sign_pow.h"
@@ -41,15 +41,12 @@ inline std::vector<HellsingBTerm> B_array_hellsing(
     // Reserve is optional; keeping it modest avoids over-reserving for small l.
     // arr.reserve(...);
 
-    // Python:
-    // for i1 in range(l1//2+1):
     for (int i1 = 0; i1 <= l1 / 2; ++i1) {
         for (int i2 = 0; i2 <= l2 / 2; ++i2) {
             for (int o1 = 0; o1 <= l1 - 2 * i1; ++o1) {
                 for (int o2 = 0; o2 <= l2 - 2 * i2; ++o2) {
                     const int oo12 = o1 + o2;
                     for (int r1 = 0; r1 <= oo12 / 2; ++r1) {
-                        // t11 = (-1)^(o2+r1) * (o1+o2)! / (4^(i1+i2+r1) i1! i2! o1! o2! r1!)
                         const double t11 = eri::math::sign_pow(o2 + r1)
                                          * eri::math::factorial(oo12)
                                          / eri::math::ipow(4.0, i1 + i2 + r1)
@@ -59,15 +56,11 @@ inline std::vector<HellsingBTerm> B_array_hellsing(
                                          / eri::math::factorial(o2)
                                          / eri::math::factorial(r1);
 
-                        // t12 = a1^(o2-i1-r1) * a2^(o1-i2-r1) * g1^(2*(i1+i2)+r1)
-                        //       * (ax-bx)^(o1+o2-2*r1) /
-                        //       ( (l1-2*i1-o1)! (l2-2*i2-o2)! (o1+o2-2*r1)! )
                         const int e_a1 = o2 - i1 - r1;
                         const int e_a2 = o1 - i2 - r1;
                         const int e_g1 = 2 * (i1 + i2) + r1;
                         const int e_x1 = oo12 - 2 * r1;
 
-                        // Negative exponents should not occur in valid ranges, but keep robust:
                         if (e_a1 < 0 || e_a2 < 0 || e_x1 < 0) continue;
 
                         const double num12 =
@@ -95,7 +88,6 @@ inline std::vector<HellsingBTerm> B_array_hellsing(
                                     for (int o4 = 0; o4 <= l4 - 2 * i4; ++o4) {
                                         const int oo34 = o3 + o4;
                                         for (int r2 = 0; r2 <= oo34 / 2; ++r2) {
-                                            // t21 = (-1)^(o3+r2) * (o3+o4)! / (4^(i3+i4+r2) i3! i4! o3! o4! r2!)
                                             const double t21 = eri::math::sign_pow(o3 + r2)
                                                              * eri::math::factorial(oo34)
                                                              / eri::math::ipow(4.0, i3 + i4 + r2)
@@ -105,9 +97,6 @@ inline std::vector<HellsingBTerm> B_array_hellsing(
                                                              / eri::math::factorial(o4)
                                                              / eri::math::factorial(r2);
 
-                                            // t22 = a3^(o4-i3-r2) * a4^(o3-i4-r2) * g2^(2*(i3+i4)+r2)
-                                            //       * (cx-dx)^(o3+o4-2*r2) /
-                                            //       ( (l3-2*i3-o3)! (l4-2*i4-o4)! (o3+o4-2*r2)! )
                                             const int e_a3 = o4 - i3 - r2;
                                             const int e_a4 = o3 - i4 - r2;
                                             const int e_g2 = 2 * (i3 + i4) + r2;
@@ -134,7 +123,6 @@ inline std::vector<HellsingBTerm> B_array_hellsing(
 
                                             const double t22 = num22 / den22;
 
-                                            // mu = l1+l2+l3+l4 - 2*(i1+i2+i3+i4) - (o1+o2+o3+o4)
                                             const int mu =
                                                 (l1 + l2 + l3 + l4)
                                                 - 2 * (i1 + i2 + i3 + i4)
@@ -142,9 +130,7 @@ inline std::vector<HellsingBTerm> B_array_hellsing(
 
                                             if (mu < 0) continue;
 
-                                            // for u in range(mu//2+1):
                                             for (int u = 0; u <= mu / 2; ++u) {
-                                                // t3 = (-1)^u * mu! * eta^(mu-u) * (px-qx)^(mu-2u) / (4^u u! (mu-2u)!)
                                                 const int e_eta = mu - u;
                                                 const int e_pq  = mu - 2 * u;
                                                 if (e_pq < 0) continue;
@@ -203,6 +189,26 @@ inline double eri_primitive_hellsing(
     const double gamma1 = a1 + a2;
     const double gamma2 = a3 + a4;
     const double eta    = (gamma1 * gamma2) / (gamma1 + gamma2);
+    const double T = eta * rpq2;
+
+    // evaluate nu_ma
+    const int nu_max =
+        (lx1 + ly1 + lz1) +
+        (lx2 + ly2 + lz2) +
+        (lx3 + ly3 + lz3) +
+        (lx4 + ly4 + lz4);
+
+    // universal pre-factor
+    constexpr double pi25 = (M_PI * M_PI) * std::sqrt(M_PI);
+    const double pref =
+        2.0 * pi25 / (gamma1 * gamma2 * std::sqrt(gamma1 + gamma2)) *
+        std::exp(-a1 * a2 * rab2 / gamma1) *
+        std::exp(-a3 * a4 * rcd2 / gamma2);
+
+    // early exit for (ss|ss)
+    if(nu_max == 0) {
+        return pref * eri::math::Fgamma_interp(0, T);
+    }
 
     // Build B-arrays for each Cartesian component (x, y, z)
     const auto Bx = B_array_hellsing(
@@ -226,25 +232,11 @@ inline double eri_primitive_hellsing(
         P[2], Q[2],
         gamma1, gamma2);
 
-    // Precompute Fgamma values up to nu_max
-    const int nu_max =
-        (lx1 + ly1 + lz1) +
-        (lx2 + ly2 + lz2) +
-        (lx3 + ly3 + lz3) +
-        (lx4 + ly4 + lz4);
-
-    std::vector<double> F(nu_max + 1);
-    const double T = eta * rpq2;
-
     // build Fgamma block
-    if (nu_max == 0) {  // fast: no recurrence needed
-         F[0] = eri::math::Fgamma(0, T);
-    } else {
-        eri::math::Fgamma_block(nu_max, T, F.data());
-    }
+    std::vector<double> F(nu_max + 1);
+    eri::math::Fgamma_block_interp(nu_max, T, F.data());
 
-    // Triple sum:
-    // nu = (mu_x + mu_y + mu_z) - (u_x + u_y + u_z)
+    // triple sum
     double s = 0.0;
     for (const auto& tx : Bx) {
         for (const auto& ty : By) {
@@ -261,13 +253,6 @@ inline double eri_primitive_hellsing(
             }
         }
     }
-
-    // Universal pre-factor (same as Huzinaga version, but using eta in Fgamma arg)
-    constexpr double pi25 = (M_PI * M_PI) * std::sqrt(M_PI);
-    const double pref =
-        2.0 * pi25 / (gamma1 * gamma2 * std::sqrt(gamma1 + gamma2)) *
-        std::exp(-a1 * a2 * rab2 / gamma1) *
-        std::exp(-a3 * a4 * rcd2 / gamma2);
 
     return pref * s;
 }

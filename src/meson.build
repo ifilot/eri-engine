@@ -5,12 +5,17 @@ sources = files(
     'engine/engine.cpp',
 )
 
-# one-electron integrals
+# integrals
 sources += files(
     'one_electron/overlap.cpp',
     'one_electron/kinetic.cpp',
     'one_electron/nuclear.cpp',
     'two_electron/eri.cpp',
+)
+
+# math
+sources += files(
+    'math/fgamma_interpolation.cpp',
 )
 
 inc = include_directories(
