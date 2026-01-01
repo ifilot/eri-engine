@@ -19,12 +19,18 @@ inc = include_directories(
 )
 
 jsoncpp_dep = dependency('jsoncpp', required: true)
+openmp_dep = dependency('openmp', required: false)
+
+eri_deps = [jsoncpp_dep]
+if openmp_dep.found()
+  eri_deps += openmp_dep
+endif
 
 eri_core = library(
     'eri-core',
     sources,
     include_directories: inc,
-    dependencies: [jsoncpp_dep],
+    dependencies: eri_deps,
     install: true
 )
 

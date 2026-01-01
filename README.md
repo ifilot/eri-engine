@@ -4,6 +4,19 @@
 
 ## Compilation
 
+Make sure the following packages are installed
+
+```bash
+sudo apt-get update
+sudo apt-get install -y \
+    meson \
+    ninja-build \
+    g++ \
+    python3 \
+    libbenchmark-dev \
+    libjsoncpp-dev
+```
+
 ```bash
 meson setup build
 ninja -C build
@@ -19,4 +32,10 @@ or using verbose output
 
 ```bash
 meson test -C build --verbose
+```
+
+## Benchmarking
+
+```bash
+meson compile -C build bench-eri
 ```

@@ -27,3 +27,17 @@ subdir('data/basis')
 subdir('src')
 subdir('tests')
 subdir('benchmarks')
+
+run_target(
+  'bench-eri',
+  command: [
+    'sh', '-c',
+    'meson test -C ' + meson.current_build_dir() +
+    ' --print-errorlogs && ' +
+    join_paths(meson.current_build_dir(), 'benchmarks', 'benchmark-eri') +
+    ' --benchmark_repetitions=3' +
+    ' --benchmark_report_aggregates_only=true' +
+    ' --benchmark_time_unit=s'
+  ],
+  env: ['OMP_NUM_THREADS=20']
+)

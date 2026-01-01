@@ -13,7 +13,6 @@ inline constexpr double MINN  = std::numeric_limits<double>::min();   // smalles
 inline constexpr double FPMIN = MINN / EPS;
 
 inline double gammln(double xx) {
-    // coefficients from your Python
     static constexpr double cof[] = {
         57.1562356658629235,  -59.5979603554754912,
         14.1360979747417471,  -0.491913816097620199,

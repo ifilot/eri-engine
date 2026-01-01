@@ -42,6 +42,7 @@ SymmetricERITensor build_eri_tensor(const basis::BasisSet& basis)
     }
 
     // evaluate and populate
+    #pragma omp parallel for schedule(dynamic)
     for (const auto& job : jobs) {
         eri(job.i, job.j, job.k, job.l) =
             Operator::eval(basis[job.i], basis[job.j],
