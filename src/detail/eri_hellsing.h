@@ -5,7 +5,7 @@
 #include <cmath>
 
 #include "math/gaussian_product.h"
-#include "math/fgamma.h"
+#include "math/fgamma_block.h"
 #include "math/factorial.h"
 #include "math/ipow.h"
 #include "math/sign_pow.h"
@@ -235,8 +235,12 @@ inline double eri_primitive_hellsing(
 
     std::vector<double> F(nu_max + 1);
     const double T = eta * rpq2;
-    for (int nu = 0; nu <= nu_max; ++nu) {
-        F[nu] = eri::math::Fgamma(nu, T);
+
+    // build Fgamma block
+    if (nu_max == 0) {  // fast: no recurrence needed
+         F[0] = eri::math::Fgamma(0, T);
+    } else {
+        eri::math::Fgamma_block(nu_max, T, F.data());
     }
 
     // Triple sum:

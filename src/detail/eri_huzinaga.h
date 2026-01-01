@@ -7,7 +7,7 @@
 
 #include "math/gaussian_product.h"
 #include "math/binomial_prefactor.h"
-#include "math/fgamma.h"
+#include "math/fgamma_block.h"
 #include "math/factorial.h"
 #include "math/ipow.h"
 #include "math/sign_pow.h"
@@ -139,13 +139,16 @@ inline double eri_primitive_huzinaga(
     const auto By = B_array_huzinaga(ly1, ly2, ly3, ly4, P[1], A[1], B[1], Q[1], C[1], D[1], gamma1, gamma2, delta);
     const auto Bz = B_array_huzinaga(lz1, lz2, lz3, lz4, P[2], A[2], B[2], Q[2], C[2], D[2], gamma1, gamma2, delta);
 
-    // Precompute Fgamma values up to nu_max
+    // precompute Fgamma values up to nu_max
     const int nu_max = (lx1+ly1+lz1) + (lx2+ly2+lz2) + (lx3+ly3+lz3) + (lx4+ly4+lz4);
     std::vector<double> F(nu_max + 1);
-
     const double T = 0.25 * rpq2 / delta;
-    for (int nu = 0; nu <= nu_max; ++nu) {
-        F[nu] = eri::math::Fgamma(nu, T);
+
+    // build Fgamma block
+    if (nu_max == 0) {  // fast: no recurrence needed
+         F[0] = eri::math::Fgamma(0, T);
+    } else {
+        eri::math::Fgamma_block(nu_max, T, F.data());
     }
 
     // evaluate triple-sum
