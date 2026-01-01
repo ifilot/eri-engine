@@ -24,7 +24,7 @@ inline double eri_primitive(
             );
 
         case eri::enums::ERIMethod::Hellsing:
-            return eri::detail::eri_primitive_huzinaga(
+            return eri::detail::eri_primitive_hellsing(
                 lx1, ly1, lz1, A, a,
                 lx2, ly2, lz2, B, b,
                 lx3, ly3, lz3, C, c,

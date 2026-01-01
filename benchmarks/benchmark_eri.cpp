@@ -41,6 +41,16 @@ static void BM_ERI_Huzinaga(benchmark::State& state) {
     }
 }
 
+static void BM_ERI_Hellsing(benchmark::State& state) {
+    static eri::basis::BasisSet basis = make_basis();
+
+    for (auto _ : state) {
+        auto tetensor = eri::math::build_eri_tensor<eri::ops::ERIHellsing>(basis);
+        benchmark::DoNotOptimize(tetensor.data());
+        benchmark::ClobberMemory();
+    }
+}
+
 BENCHMARK(BM_ERI_Huzinaga);
-// BENCHMARK(BM_Overlap_Hellsing);
+BENCHMARK(BM_ERI_Hellsing);
 BENCHMARK_MAIN();

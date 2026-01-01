@@ -75,10 +75,10 @@ struct ERIHuzinaga {
     }
 };
 
-// struct ERIHellsing {
-//     static double eval(const basis::CGF& a, const basis::CGF& b, const basis::CGF& c, const basis::CGF& d) {
-//         return eri::one_electron::nuclear(a, b, c, d, eri::enums::ERIMethod::Hellsing);
-//     }
-// };
+struct ERIHellsing {
+    static double eval(const basis::CGF& a, const basis::CGF& b, const basis::CGF& c, const basis::CGF& d) {
+        return eri::two_electron::eri(a, b, c, d, eri::enums::ERIMethod::Hellsing);
+    }
+};
 
 } // namespace eri::ops
