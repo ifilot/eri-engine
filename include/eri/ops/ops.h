@@ -1,6 +1,7 @@
 #include <eri/one_electron/overlap.h>
 #include <eri/one_electron/kinetic.h>
 #include <eri/one_electron/nuclear.h>
+#include <eri/two_electron/eri.h>
 
 namespace eri::ops {
 
@@ -60,5 +61,24 @@ struct NuclearHellsing {
         return eri::one_electron::nuclear(a, b, C, eri::enums::NuclearMethod::Hellsing);
     }
 };
+
+// defaults to Huzinaga
+struct ERI {
+    static double eval(const basis::CGF& a, const basis::CGF& b, const basis::CGF& c, const basis::CGF& d) {
+        return eri::two_electron::eri(a, b, c, d, eri::enums::ERIMethod::Huzinaga);
+    }
+};
+
+struct ERIHuzinaga {
+    static double eval(const basis::CGF& a, const basis::CGF& b, const basis::CGF& c, const basis::CGF& d) {
+        return eri::two_electron::eri(a, b, c, d, eri::enums::ERIMethod::Huzinaga);
+    }
+};
+
+// struct ERIHellsing {
+//     static double eval(const basis::CGF& a, const basis::CGF& b, const basis::CGF& c, const basis::CGF& d) {
+//         return eri::one_electron::nuclear(a, b, c, d, eri::enums::ERIMethod::Hellsing);
+//     }
+// };
 
 } // namespace eri::ops

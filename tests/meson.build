@@ -21,3 +21,9 @@ foreach name, src : test_sources
 
   test(name, exe)
 endforeach
+
+h2o_eri_data = configure_file(
+  input: 'data/h2o_eri.txt',
+  output: 'h2o_eri.txt',
+  copy: true
+)
