@@ -1,6 +1,8 @@
 #include "math/fgamma_acc.h"
 #include "math/fgamma_nr.h"
 
+#include <vector>
+
 namespace eri::math {
 
 double Fgamma_acc(int n, double T) {

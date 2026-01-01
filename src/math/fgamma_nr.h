@@ -1,19 +1,64 @@
 #pragma once
+
 #include <cmath>
-#include <vector>
 #include <limits>
 #include <algorithm>
 
 namespace eri::math {
 
+/**
+ * @file fgamma_nr.h
+ * @brief Boys-function implementation based on Numerical Recipes incomplete gamma.
+ *
+ * @warning
+ * This implementation is provided for legacy compatibility, validation,
+ * and experimentation.  It is NOT used as the primary Boys-function
+ * evaluator in production code, due to limited accuracy in the small-T
+ * regime and amplification of incomplete-gamma errors.
+ *
+ * The preferred high-accuracy implementation is:
+ *   - Fgamma_acc      (erf + series + recurrence)
+ *   - Fgamma_interp   (tabulated + recurrence)
+ */
+
 namespace detail {
 
-// numeric constants similar to numpy float64
-inline constexpr double EPS   = std::numeric_limits<double>::epsilon();
-inline constexpr double MINN  = std::numeric_limits<double>::min();   // smallest positive normal
+/*==============================================================================
+  Numerical constants (double precision)
+==============================================================================*/
+
+/**
+ * @brief Machine epsilon for double precision.
+ */
+inline constexpr double EPS = std::numeric_limits<double>::epsilon();
+
+/**
+ * @brief Smallest positive normalized double.
+ */
+inline constexpr double MINN = std::numeric_limits<double>::min();
+
+/**
+ * @brief Safe minimum used to avoid division underflow in continued fractions.
+ */
 inline constexpr double FPMIN = MINN / EPS;
 
-inline double gammln(double xx) {
+
+/*==============================================================================
+  Logarithm of the gamma function (Lanczos approximation)
+==============================================================================*/
+
+/**
+ * @brief Natural logarithm of the Gamma function.
+ *
+ * Uses the Lanczos approximation as presented in Numerical Recipes.
+ *
+ * @param xx  Argument (must be positive)
+ * @return log(Γ(xx)), or NaN if xx ≤ 0
+ *
+ * @note Accuracy is typically near machine precision for positive xx.
+ */
+inline double gammln(double xx)
+{
     static constexpr double cof[] = {
         57.1562356658629235,  -59.5979603554754912,
         14.1360979747417471,  -0.491913816097620199,
@@ -32,8 +77,8 @@ inline double gammln(double xx) {
 
     double tmp = x + 5.24218750000000000;
     tmp = (x + 0.5) * std::log(tmp) - tmp;
-    double ser = 0.999999999999997092;
 
+    double ser = 0.999999999999997092;
     for (double c : cof) {
         y += 1.0;
         ser += c / y;
@@ -42,12 +87,22 @@ inline double gammln(double xx) {
     return tmp + std::log(2.5066282746310005 * ser / x);
 }
 
-inline double gser(double a, double x) {
+
+/*==============================================================================
+  Regularized incomplete gamma P(a,x)
+==============================================================================*/
+
+/**
+ * @brief Series expansion for P(a,x).
+ *
+ * Used when x < a + 1.  Converges rapidly for small x.
+ */
+inline double gser(double a, double x)
+{
     const double gln = gammln(a);
     double ap = a;
-
-    double d = 1.0 / a;
-    double s = d;
+    double d  = 1.0 / a;
+    double s  = d;
 
     while (true) {
         ap += 1.0;
@@ -59,7 +114,14 @@ inline double gser(double a, double x) {
     }
 }
 
-inline double gcf(double a, double x) {
+
+/**
+ * @brief Continued-fraction representation for Q(a,x) = 1 − P(a,x).
+ *
+ * Used when x ≥ a + 1.  Stable for moderate and large x.
+ */
+inline double gcf(double a, double x)
+{
     const double gln = gammln(a);
 
     double b = x + 1.0 - a;
@@ -67,8 +129,7 @@ inline double gcf(double a, double x) {
     double d = 1.0 / b;
     double h = d;
 
-    double i = 1.0;
-    while (true) {
+    for (double i = 1.0;; ++i) {
         const double an = -i * (i - a);
         b += 2.0;
 
@@ -79,17 +140,26 @@ inline double gcf(double a, double x) {
         if (std::fabs(c) < FPMIN) c = FPMIN;
 
         d = 1.0 / d;
-        const double dd = d * c;
-        h *= dd;
+        const double delta = d * c;
+        h *= delta;
 
-        if (std::fabs(dd - 1.0) <= EPS) break;
-        i += 1.0;
+        if (std::fabs(delta - 1.0) <= EPS)
+            break;
     }
 
     return std::exp(-x + a * std::log(x) - gln) * h;
 }
 
-inline double gammpapprox(double a, double x, int psig) {
+
+/**
+ * @brief Asymptotic approximation for P(a,x) at large a.
+ *
+ * Used for a ≥ ASWITCH to reduce computational cost.
+ *
+ * @note This is an approximation, not a fully converged evaluation.
+ */
+inline double gammpapprox(double a, double x, int psig)
+{
     static constexpr double y[] = {
         0.0021695375159141994, 0.011413521097787704, 0.027972308950302116,
         0.051727015600492421,  0.082502225484340941, 0.12007019910960293,
@@ -112,50 +182,84 @@ inline double gammpapprox(double a, double x, int psig) {
     if (a1 <= 0.0)
         return std::numeric_limits<double>::quiet_NaN();
 
-    const double lna1 = std::log(a1);
+    const double lna1   = std::log(a1);
     const double sqrta1 = std::sqrt(a1);
-    const double gln = gammln(a);
+    const double gln    = gammln(a);
 
     double xu;
-    if (x > a1) xu = std::max(a1 + 11.5 * sqrta1, x + 6.0 * sqrta1);
-    else        xu = std::max(0.0, std::min(a1 - 7.5 * sqrta1, x - 5.0 * sqrta1));
+    if (x > a1)
+        xu = std::max(a1 + 11.5 * sqrta1, x + 6.0 * sqrta1);
+    else
+        xu = std::max(0.0, std::min(a1 - 7.5 * sqrta1, x - 5.0 * sqrta1));
 
     double s = 0.0;
-    for (int j = 0; j < (int)(sizeof(y)/sizeof(y[0])); ++j) {
+    for (std::size_t j = 0; j < sizeof(y)/sizeof(y[0]); ++j) {
         const double t = x + (xu - x) * y[j];
         s += w[j] * std::exp(-(t - a1) + a1 * (std::log(t) - lna1));
     }
 
     const double ans = s * (xu - x) * std::exp(a1 * (lna1 - 1.0) - gln);
 
-    if (psig != 0) { // return P(a,x)
-        return (ans > 0.0) ? (1.0 - ans) : (-ans);
-    } else {         // return Q(a,x)
-        return (ans >= 0.0) ? ans : (1.0 + ans);
-    }
+    return (psig != 0)
+        ? ((ans > 0.0) ? (1.0 - ans) : (-ans))   // P(a,x)
+        : ((ans >= 0.0) ? ans : (1.0 + ans));    // Q(a,x)
 }
 
-inline double gammp(double a, double x) {
+
+/**
+ * @brief Regularized lower incomplete gamma P(a,x).
+ */
+inline double gammp(double a, double x)
+{
     constexpr double ASWITCH = 100.0;
 
     if (x < 0.0 || a <= 0.0)
         return std::numeric_limits<double>::quiet_NaN();
-    if (x == 0.0) return 0.0;
 
-    if (a >= ASWITCH) return gammpapprox(a, x, 1);
-    if (x < a + 1.0)  return gser(a, x);
+    if (x == 0.0)
+        return 0.0;
+
+    if (a >= ASWITCH)
+        return gammpapprox(a, x, 1);
+
+    if (x < a + 1.0)
+        return gser(a, x);
+
     return 1.0 - gcf(a, x);
 }
 
-inline double gamm_inc(double a, double x) {
-    const double p = gammp(a, x);
+
+/**
+ * @brief Lower incomplete gamma γ(a,x).
+ */
+inline double gamm_inc(double a, double x)
+{
+    const double p   = gammp(a, x);
     const double gln = gammln(a);
-    return std::exp(gln) * p; // lower incomplete gamma
+    return std::exp(gln) * p;
 }
 
 } // namespace detail
 
-// Boys function F_a(x) using your definition
+
+/*==============================================================================
+  Public API: Numerical Recipes Boys function
+==============================================================================*/
+
+/**
+ * @brief Boys function F_a(x) using Numerical Recipes incomplete gamma.
+ *
+ * @warning
+ * This implementation is NOT numerically robust for small x and/or large a.
+ * It should not be used as a reference or production evaluator.
+ *
+ * Prefer:
+ *   - Fgamma_acc      (high accuracy)
+ *   - Fgamma_interp  (high performance)
+ *
+ * @param a  Boys order (a ≥ 0)
+ * @param x  Boys argument (x ≥ 0)
+ */
 double Fgamma_nr(int a, double x);
 
 } // namespace eri::math
