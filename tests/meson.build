@@ -3,6 +3,7 @@ test_inc = include_directories('..', '../include')
 test_sources = {
   'engine':   'test_engine.cpp',
   'cgf':      'test_cgf.cpp',
+  'fgamma':   'test_fgamma.cpp',
   'overlap':  'test_overlap.cpp',
   'kinetic':  'test_kinetic.cpp',
   'nuclear':  'test_nuclear.cpp',

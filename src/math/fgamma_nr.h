@@ -1,7 +1,8 @@
 #pragma once
-
 #include <cmath>
+#include <vector>
 #include <limits>
+#include <algorithm>
 
 namespace eri::math {
 
@@ -155,14 +156,6 @@ inline double gamm_inc(double a, double x) {
 } // namespace detail
 
 // Boys function F_a(x) using your definition
-inline double Fgamma(int a, double x) {
-    x = std::fabs(x);
-    if (x < 1e-7) x = 1e-7;
-
-    const double val = detail::gamm_inc(a + 0.5, x);
-    if (std::isnan(val)) return val;
-
-    return 0.5 * std::pow(x, -a - 0.5) * val;
-}
+double Fgamma_nr(int a, double x);
 
 } // namespace eri::math

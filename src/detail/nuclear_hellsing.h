@@ -5,7 +5,7 @@
 #include <cmath>
 
 #include "math/gaussian_product.h"
-#include "math/fgamma.h"
+#include "math/fgamma_nr.h"
 #include "math/factorial.h"
 #include "math/ipow.h"
 #include "math/sign_pow.h"
@@ -103,7 +103,7 @@ inline double nuclear_primitive_hellsing(
 
     std::vector<double> F(nu_max + 1);
     for (int n = 0; n <= nu_max; ++n)
-        F[n] = eri::math::Fgamma(n, gamma * rcp2);
+        F[n] = eri::math::Fgamma_nr(n, gamma * rcp2);
 
     double s = 0.0;
 

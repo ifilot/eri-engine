@@ -2,11 +2,9 @@
 
 namespace eri::math {
 
-// ------------------- Tunables -------------------
-constexpr double T_SMALL = 1e-8;
+constexpr double T_SMALL = 1e-6;
 constexpr double T_LARGE = 30.0;
 constexpr int    NTABLE  = 2048;
-// ------------------------------------------------
 
 // ---------- Internal table state (private) ----------
 namespace {
@@ -33,14 +31,13 @@ void init_Fgamma_interp_table(int nu_table_max_in)
     inv_dlogT = (NTABLE - 1) / (logT_max - logT_min);
 
     for (int i = 0; i < NTABLE; ++i) {
-        const double logT = logT_min +
-            (logT_max - logT_min) * (double)i / (double)(NTABLE - 1);
+        const double logT = logT_min + (logT_max - logT_min) * (double)i / (double)(NTABLE - 1);
         const double T     = std::exp(logT);
         const double sqrtT = std::sqrt(T);
 
         double Tpow = sqrtT; // T^(nu+1/2), nu=0
         for (int nu = 0; nu <= nu_tab_max; ++nu) {
-            const double Fnu = eri::math::Fgamma(nu, T);
+            const double Fnu = eri::math::Fgamma_acc(nu, T);
             Htab[idx(nu, i)] = Tpow * Fnu;
             Tpow *= T;
         }
@@ -52,8 +49,12 @@ static inline double Hgamma_interp(int nu, double T)
 {
     const double x = (std::log(T) - logT_min) * inv_dlogT;
     int i = static_cast<int>(x);
-    if (i < 0) i = 0;
-    if (i > NTABLE - 2) i = NTABLE - 2;
+    if (i < 0) {
+        i = 0;
+    }
+    if (i > NTABLE - 2) {
+        i = NTABLE - 2;
+    }
 
     const double w = x - i;
     const double h0 = Htab[idx(nu, i)];
@@ -64,14 +65,17 @@ static inline double Hgamma_interp(int nu, double T)
 // ---------- Public interpolated Fgamma ----------
 double Fgamma_interp(int nu, double T)
 {
-    if (T < 0.0)
+    if (T < 0.0) {
         return std::numeric_limits<double>::quiet_NaN();
+    }
 
-    if (T < T_SMALL)
-        return 1.0 / (2.0 * nu + 1.0);
+    if (T < T_SMALL) {
+        return eri::math::Fgamma_acc(nu, T);
+    }
 
-    if (nu_tab_max < 0 || nu > nu_tab_max)
-        return eri::math::Fgamma(nu, T);
+    if (nu_tab_max < 0 || nu > nu_tab_max) {
+        return eri::math::Fgamma_acc(nu, T);
+    }
 
     if (T <= T_LARGE) {
         const double H = Hgamma_interp(nu, T);
@@ -83,15 +87,16 @@ double Fgamma_interp(int nu, double T)
         return H / (sqrtT * Tnu);
     }
 
-    return eri::math::Fgamma(nu, T);
+    return eri::math::Fgamma_acc(nu, T);
 }
 
 // ---------- Block evaluator ----------
 void Fgamma_block_interp(int nu_max, double T, double* F)
 {
     if (T < T_SMALL) {
-        for (int nu = 0; nu <= nu_max; ++nu)
-            F[nu] = 1.0 / (2.0 * nu + 1.0);
+        for (int nu = 0; nu <= nu_max; ++nu) {
+            F[nu] = eri::math::Fgamma_acc(nu, T);
+        }
         return;
     }
 
@@ -103,8 +108,7 @@ void Fgamma_block_interp(int nu_max, double T, double* F)
         const double inv2T = 1.0 / (2.0 * T);
 
         for (int nu = 0; nu < nu_max; ++nu) {
-            F[nu + 1] =
-                ((2.0 * nu + 1.0) * F[nu] - expmT) * inv2T;
+            F[nu + 1] = ((2.0 * nu + 1.0) * F[nu] - expmT) * inv2T;
         }
     }
     else {
@@ -112,8 +116,7 @@ void Fgamma_block_interp(int nu_max, double T, double* F)
         F[nu_max] = Fgamma_interp(nu_max, T);
 
         for (int nu = nu_max; nu > 0; --nu) {
-            F[nu - 1] =
-                (2.0 * T * F[nu] + expmT) / (2.0 * nu - 1.0);
+            F[nu - 1] = (2.0 * T * F[nu] + expmT) / (2.0 * nu - 1.0);
         }
     }
 }

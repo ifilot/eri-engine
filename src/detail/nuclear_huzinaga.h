@@ -6,7 +6,7 @@
 
 #include "math/gaussian_product.h"
 #include "math/binomial_prefactor.h"
-#include "math/fgamma.h"
+#include "math/fgamma_nr.h"
 #include "math/factorial.h"
 #include "math/ipow.h"
 
@@ -89,7 +89,7 @@ inline double nuclear_primitive_huzinaga(
     std::vector<double> F(nu_max + 1);
     const double T = gamma * RCP2;
     for (int n = 0; n <= nu_max; ++n) {
-        F[n] = eri::math::Fgamma(n, T);
+        F[n] = eri::math::Fgamma_nr(n, T);
     }
 
     // triple sum

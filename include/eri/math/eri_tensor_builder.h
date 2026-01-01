@@ -6,7 +6,7 @@
 #include <eri/math/symmetric_eri_tensor.h>
 #include <eri/two_electron/eri.h>
 #include <eri/two_electron/eri_index.h>
-#include <eri/math/fgamma_interpolation.h>
+#include <eri/math/fgamma.h>
 
 namespace eri::math {
 
