@@ -19,6 +19,10 @@ sources += files(
     'math/fgamma_interpolation.cpp',
 )
 
+sources += files(
+    'cog/hellsing_cache.cpp',
+)
+
 inc = include_directories(
     '.',
     '../include',

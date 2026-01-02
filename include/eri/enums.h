@@ -19,7 +19,8 @@ enum class NuclearMethod {
 
 enum class ERIMethod {
     Huzinaga,
-    Hellsing
+    Hellsing,
+    HellsingCached
 };
 
 } // namespace eri::enums

@@ -43,7 +43,7 @@ TEST_CASE("Kinetic energy matrix for H2O / STO-3G (Huzinaga)")
     const std::size_t n = basis.size();
     REQUIRE(n == 7); // STO-3G H2O has 7 Cartesian basis functions
 
-    const auto T = eri::math::build_symmetric_matrix<eri::ops::KineticHuzinaga>(basis);
+    const auto T = eri::math::build_symmetric_matrix<eri::ops::one_electron::KineticHuzinaga>(basis);
 
     for (std::size_t i = 0; i < n; ++i) {
         CHECK(std::isfinite(T(i,i)));
@@ -72,7 +72,7 @@ TEST_CASE("Kinetic energy matrix for H2O / STO-3G (Hellsing)")
     const std::size_t n = basis.size();
     REQUIRE(n == 7); // STO-3G H2O has 7 Cartesian basis functions
 
-    const auto T = eri::math::build_symmetric_matrix<eri::ops::KineticHellsing>(basis);
+    const auto T = eri::math::build_symmetric_matrix<eri::ops::one_electron::KineticHellsing>(basis);
 
     for (std::size_t i = 0; i < n; ++i) {
         CHECK(std::isfinite(T(i,i)));

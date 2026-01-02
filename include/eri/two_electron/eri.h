@@ -2,13 +2,17 @@
 
 #include <eri/enums.h>
 #include <eri/basis/cgf.h>
+#include <eri/cog/hellsing_cache.h>
+
+using eri::basis::CGF;
 
 namespace eri::two_electron {
 
-double eri(const eri::basis::CGF& a,
-           const eri::basis::CGF& b,
-           const eri::basis::CGF& c,
-           const eri::basis::CGF& d,
-           eri::enums::ERIMethod method = eri::enums::ERIMethod::Huzinaga);
+double eri_huzinaga(const CGF& a, const CGF& b, const CGF& c, const CGF& d);
+
+double eri_hellsing(const CGF& a, const CGF& b, const CGF& c, const CGF& d);
+
+double eri_hellsing_cached(const CGF& a, const CGF& b, const CGF& c, const CGF& d,
+                           const eri::cog::HellsingCacheTable& cache);
 
 } // namespace eri::one_electron

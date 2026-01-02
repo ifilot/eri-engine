@@ -43,12 +43,12 @@ static eri::basis::BasisSet make_basis_h2o() {
 TEST_CASE("ERI Huzinaga (STO-3G H2)") {
     auto basis = make_basis_h2();
 
-    double T1111 = eri::two_electron::eri(basis[0], basis[0], basis[0], basis[0]);
-    double T1122 = eri::two_electron::eri(basis[0], basis[0], basis[1], basis[1]);
-    double T1112 = eri::two_electron::eri(basis[0], basis[0], basis[0], basis[1]);
-    double T2121 = eri::two_electron::eri(basis[1], basis[0], basis[1], basis[0]);
-    double T1222 = eri::two_electron::eri(basis[0], basis[1], basis[1], basis[1]);
-    double T2211 = eri::two_electron::eri(basis[1], basis[1], basis[0], basis[0]);
+    double T1111 = eri::two_electron::eri_huzinaga(basis[0], basis[0], basis[0], basis[0]);
+    double T1122 = eri::two_electron::eri_huzinaga(basis[0], basis[0], basis[1], basis[1]);
+    double T1112 = eri::two_electron::eri_huzinaga(basis[0], basis[0], basis[0], basis[1]);
+    double T2121 = eri::two_electron::eri_huzinaga(basis[1], basis[0], basis[1], basis[0]);
+    double T1222 = eri::two_electron::eri_huzinaga(basis[0], basis[1], basis[1], basis[1]);
+    double T2211 = eri::two_electron::eri_huzinaga(basis[1], basis[1], basis[0], basis[0]);
 
     const double epsilon = 1e-6;
 
@@ -64,17 +64,17 @@ TEST_CASE("ERI Huzinaga (STO-3G H2)") {
 TEST_CASE("ERI Huzinaga (STO-3G H2O - selected)") {
     auto basis = make_basis_h2o();
     const double epsilon = 1e-6;
-    CHECK(eri::two_electron::eri(basis[0], basis[0], basis[0], basis[0]) == doctest::Approx(4.785069).epsilon(epsilon));
-    CHECK(eri::two_electron::eri(basis[6], basis[6], basis[6], basis[6]) == doctest::Approx(0.774605).epsilon(epsilon));
-    CHECK(eri::two_electron::eri(basis[1], basis[2], basis[3], basis[4]) == doctest::Approx(0).epsilon(epsilon));
-    CHECK(eri::two_electron::eri(basis[2], basis[2], basis[5], basis[5]) == doctest::Approx(0.469864).epsilon(epsilon));
-    CHECK(eri::two_electron::eri(basis[2], basis[2], basis[6], basis[6]) == doctest::Approx(0.469864).epsilon(epsilon));
+    CHECK(eri::two_electron::eri_huzinaga(basis[0], basis[0], basis[0], basis[0]) == doctest::Approx(4.785069).epsilon(epsilon));
+    CHECK(eri::two_electron::eri_huzinaga(basis[6], basis[6], basis[6], basis[6]) == doctest::Approx(0.774605).epsilon(epsilon));
+    CHECK(eri::two_electron::eri_huzinaga(basis[1], basis[2], basis[3], basis[4]) == doctest::Approx(0).epsilon(epsilon));
+    CHECK(eri::two_electron::eri_huzinaga(basis[2], basis[2], basis[5], basis[5]) == doctest::Approx(0.469864).epsilon(epsilon));
+    CHECK(eri::two_electron::eri_huzinaga(basis[2], basis[2], basis[6], basis[6]) == doctest::Approx(0.469864).epsilon(epsilon));
 }
 
 TEST_CASE("ERI Huzinaga (STO-3G H2O)") {
     auto basis = make_basis_h2o();
     const std::size_t N = basis.size();
-    auto tetensor = eri::math::build_eri_tensor<eri::ops::ERIHuzinaga>(basis);
+    auto tetensor = eri::math::build_eri_tensor<eri::ops::two_electron::ERIHuzinaga>(basis);
 
     const std::string fname = eri::utils::executable_dir() + "/h2o_eri.txt";
 
@@ -105,7 +105,7 @@ TEST_CASE("ERI Huzinaga (STO-3G H2O)") {
 TEST_CASE("ERI Hellsing (STO-3G H2O)") {
     auto basis = make_basis_h2o();
     const std::size_t N = basis.size();
-    auto tetensor = eri::math::build_eri_tensor<eri::ops::ERIHellsing>(basis);
+    auto tetensor = eri::math::build_eri_tensor<eri::ops::two_electron::ERIHellsing>(basis);
 
     const std::string fname = eri::utils::executable_dir() + "/h2o_eri.txt";
 

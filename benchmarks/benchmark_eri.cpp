@@ -36,7 +36,7 @@ static void BM_ERI_Huzinaga(benchmark::State& state) {
     eri::math::init_Fgamma_interp_table(4);
 
     for (auto _ : state) {
-        auto tetensor = eri::math::build_eri_tensor<eri::ops::ERIHuzinaga>(basis);
+        auto tetensor = eri::math::build_eri_tensor<eri::ops::two_electron::ERIHuzinaga>(basis);
         benchmark::DoNotOptimize(tetensor.data());
         benchmark::ClobberMemory();
     }
@@ -47,7 +47,7 @@ static void BM_ERI_Hellsing(benchmark::State& state) {
     eri::math::init_Fgamma_interp_table(4);
 
     for (auto _ : state) {
-        auto tetensor = eri::math::build_eri_tensor<eri::ops::ERIHellsing>(basis);
+        auto tetensor = eri::math::build_eri_tensor<eri::ops::two_electron::ERIHellsing>(basis);
         benchmark::DoNotOptimize(tetensor.data());
         benchmark::ClobberMemory();
     }

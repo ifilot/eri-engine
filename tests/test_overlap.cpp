@@ -133,7 +133,7 @@ TEST_CASE("Full overlap matrix for H2O / STO-3G (Huzinaga)") {
     const std::size_t n = basis.size();
     REQUIRE(n == 7);
 
-    const auto S = eri::math::build_symmetric_matrix<eri::ops::OverlapHuzinaga>(basis);
+    const auto S = eri::math::build_symmetric_matrix<eri::ops::one_electron::OverlapHuzinaga>(basis);
     constexpr double eps = 1e-5;
 
     for (std::size_t i = 0; i < n; ++i) {
@@ -152,7 +152,7 @@ TEST_CASE("Full overlap matrix for H2O / STO-3G (Hellsing)") {
     const std::size_t n = basis.size();
     REQUIRE(n == 7);
 
-    const auto S = eri::math::build_symmetric_matrix<eri::ops::OverlapHellsing>(basis);
+    const auto S = eri::math::build_symmetric_matrix<eri::ops::one_electron::OverlapHellsing>(basis);
     constexpr double eps = 1e-5;
 
     for (std::size_t i = 0; i < n; ++i) {

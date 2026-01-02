@@ -35,13 +35,13 @@ TEST_CASE("Overlap matrix via operator policies")
     REQUIRE(n > 0);
 
     const auto S_def =
-        eri::math::build_symmetric_matrix<eri::ops::Overlap>(basis);
+        eri::math::build_symmetric_matrix<eri::ops::one_electron::Overlap>(basis);
 
     const auto S_huz =
-        eri::math::build_symmetric_matrix<eri::ops::OverlapHuzinaga>(basis);
+        eri::math::build_symmetric_matrix<eri::ops::one_electron::OverlapHuzinaga>(basis);
 
     const auto S_hel =
-        eri::math::build_symmetric_matrix<eri::ops::OverlapHellsing>(basis);
+        eri::math::build_symmetric_matrix<eri::ops::one_electron::OverlapHellsing>(basis);
 
     // --- basic invariants ---
     CHECK(S_def.size() == n);
@@ -89,13 +89,13 @@ TEST_CASE("Kinetic matrix via operator policies")
     REQUIRE(n > 0);
 
     const auto T_def =
-        eri::math::build_symmetric_matrix<eri::ops::Kinetic>(basis);
+        eri::math::build_symmetric_matrix<eri::ops::one_electron::Kinetic>(basis);
 
     const auto T_huz =
-        eri::math::build_symmetric_matrix<eri::ops::KineticHuzinaga>(basis);
+        eri::math::build_symmetric_matrix<eri::ops::one_electron::KineticHuzinaga>(basis);
 
     const auto T_hel =
-        eri::math::build_symmetric_matrix<eri::ops::KineticHellsing>(basis);
+        eri::math::build_symmetric_matrix<eri::ops::one_electron::KineticHellsing>(basis);
 
     // --- symmetry & positivity ---
     for (std::size_t i = 0; i < n; ++i) {

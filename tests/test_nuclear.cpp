@@ -39,7 +39,7 @@ TEST_CASE("Nuclear attraction matrix for H2O / STO-3G (Huzinaga)") {
     const std::size_t n = basis.size();
     REQUIRE(n == 7);
 
-    const auto S = eri::math::build_symmetric_matrix<eri::ops::NuclearHuzinaga>(basis, mol[0].position, mol[0].Z);
+    const auto S = eri::math::build_symmetric_matrix<eri::ops::one_electron::NuclearHuzinaga>(basis, mol[0].position, mol[0].Z);
     constexpr double eps = 1e-5;
 
     for (std::size_t i = 0; i < n; ++i) {
@@ -59,7 +59,7 @@ TEST_CASE("Nuclear attraction matrix for H2O / STO-3G (Hellsing)") {
     const std::size_t n = basis.size();
     REQUIRE(n == 7);
 
-    const auto S = eri::math::build_symmetric_matrix<eri::ops::NuclearHellsing>(basis, mol[0].position, mol[0].Z);
+    const auto S = eri::math::build_symmetric_matrix<eri::ops::one_electron::NuclearHellsing>(basis, mol[0].position, mol[0].Z);
     constexpr double eps = 1e-5;
 
     for (std::size_t i = 0; i < n; ++i) {
