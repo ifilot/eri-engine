@@ -11,7 +11,7 @@
 namespace eri::detail {
 
 inline double eri_primitive_hellsing_cached(
-    const eri::cog::HellsingCacheTable& kernels,
+    const eri::cog::HellsingCacheTable1D& kernels,
 
     int lx1, int ly1, int lz1, const std::array<double,3>& A, double a1,
     int lx2, int ly2, int lz2, const std::array<double,3>& B, double a2,

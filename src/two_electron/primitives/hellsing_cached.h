@@ -5,10 +5,10 @@
 namespace eri::two_electron::primitives {
 
 struct PrimitiveHellsingCached {
-    const eri::cog::HellsingCacheTable& cache;
+    const eri::cog::HellsingCacheTable1D& cache;
 
     explicit PrimitiveHellsingCached(
-        const eri::cog::HellsingCacheTable& c
+        const eri::cog::HellsingCacheTable1D& c
     ) : cache(c) {}
 
     double operator()(

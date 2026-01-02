@@ -37,7 +37,7 @@ struct ERIHellsing {
 };
 
 struct ERIHellsingCached {
-    eri::cog::HellsingCacheTable cache;
+    eri::cog::HellsingCacheTable1D cache;
 
     explicit ERIHellsingCached(const basis::BasisSet& basis)
         : cache(compute_lmax(basis))
