@@ -10,13 +10,20 @@
 
 namespace eri::detail {
 
-inline double eri_primitive_hellsing_cached(
+inline double eri_primitive_router(
     const eri::cog::HellsingCacheTable1D& kernels,
     int lx1, int ly1, int lz1, const std::array<double,3>& A, double a1,
     int lx2, int ly2, int lz2, const std::array<double,3>& B, double a2,
     int lx3, int ly3, int lz3, const std::array<double,3>& C, double a3,
     int lx4, int ly4, int lz4, const std::array<double,3>& D, double a4)
 {
+    // calculate angular momenta
+    const int L1 = lx1+ly1+lz1;
+    const int L2 = lx2+ly2+lz2;
+    const int L3 = lx3+ly3+lz3;
+    const int L4 = lx4+ly4+lz4;
+    const int nu_max = L1 + L2 + L3 + L4;
+
     // ---------------- geometry ----------------
     const auto P = eri::math::gaussian_product_center(a1,A,a2,B);
     const auto Q = eri::math::gaussian_product_center(a3,C,a4,D);
@@ -41,15 +48,22 @@ inline double eri_primitive_hellsing_cached(
     const double g2 = a3 + a4;
     const double eta = g1*g2/(g1+g2);
 
-    const int nu_max =
-        lx1+ly1+lz1 + lx2+ly2+lz2 +
-        lx3+ly3+lz3 + lx4+ly4+lz4;
+    // ---------------- prefactor ----------------
+    constexpr double pi25 = (M_PI*M_PI)*std::sqrt(M_PI);
+    const double pref = 2.0*pi25/(g1*g2*std::sqrt(g1+g2)) *
+                        std::exp(-a1*a2*rab2/g1) *
+                        std::exp(-a3*a4*rcd2/g2);
+
+    // evaluate (ss|ss)
+    if(nu_max == 0) {
+        return pref * eri::math::Fgamma_interp(nu_max, eta*rpq2);
+    }
 
     // ---------------- Fgamma ----------------
     std::vector<double> F(nu_max+1);
     eri::math::Fgamma_block_interp(nu_max, eta*rpq2, F.data());
 
-    // ---------------- kernels ----------------
+    // fall through to Hellsing precomputed kernels
     const auto& Kx = kernels.get(lx1,lx2,lx3,lx4);
     const auto& Ky = kernels.get(ly1,ly2,ly3,ly4);
     const auto& Kz = kernels.get(lz1,lz2,lz3,lz4);
@@ -103,13 +117,6 @@ inline double eri_primitive_hellsing_cached(
             }
         }
     }
-
-    // ---------------- prefactor ----------------
-    constexpr double pi25 = (M_PI*M_PI)*std::sqrt(M_PI);
-    const double pref =
-        2.0*pi25/(g1*g2*std::sqrt(g1+g2)) *
-        std::exp(-a1*a2*rab2/g1) *
-        std::exp(-a3*a4*rcd2/g2);
 
     return pref * s;
 }

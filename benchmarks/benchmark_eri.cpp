@@ -64,7 +64,19 @@ static void BM_ERI_HellsingCached(benchmark::State& state) {
     }
 }
 
-BENCHMARK(BM_ERI_Huzinaga);
-BENCHMARK(BM_ERI_Hellsing);
+static void BM_ERI_Router(benchmark::State& state) {
+    static eri::basis::BasisSet basis = make_basis();
+    eri::math::init_Fgamma_interp_table(4);
+
+    for (auto _ : state) {
+        auto tetensor = eri::math::build_eri_tensor<eri::ops::two_electron::ERIRouter>(basis);
+        benchmark::DoNotOptimize(tetensor.data());
+        benchmark::ClobberMemory();
+    }
+}
+
+// BENCHMARK(BM_ERI_Huzinaga);
+// BENCHMARK(BM_ERI_Hellsing);
 BENCHMARK(BM_ERI_HellsingCached);
+BENCHMARK(BM_ERI_Router);
 BENCHMARK_MAIN();

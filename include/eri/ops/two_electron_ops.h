@@ -65,4 +65,33 @@ private:
     }
 };
 
+struct ERIRouter {
+    eri::cog::HellsingCacheTable1D cache;
+
+    explicit ERIRouter(const basis::BasisSet& basis)
+        : cache(compute_lmax(basis))
+    {}
+
+    double operator()(const basis::CGF& a,
+                      const basis::CGF& b,
+                      const basis::CGF& c,
+                      const basis::CGF& d) const
+    {
+        return eri::two_electron::eri_router(a, b, c, d, cache);
+    }
+
+private:
+    static int compute_lmax(const basis::BasisSet& basis)
+    {
+        int lmax = 0;
+        for (const auto& shell : basis) {
+            lmax = std::max(
+                lmax,
+                shell.lx() + shell.ly() + shell.lz()
+            );
+        }
+        return lmax;
+    }
+};
+
 }

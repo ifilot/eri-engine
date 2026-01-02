@@ -15,4 +15,7 @@ double eri_hellsing(const CGF& a, const CGF& b, const CGF& c, const CGF& d);
 double eri_hellsing_cached(const CGF& a, const CGF& b, const CGF& c, const CGF& d,
                            const eri::cog::HellsingCacheTable1D& cache);
 
+double eri_router(const CGF& a, const CGF& b, const CGF& c, const CGF& d,
+                  const eri::cog::HellsingCacheTable1D& cache);
+
 } // namespace eri::one_electron
