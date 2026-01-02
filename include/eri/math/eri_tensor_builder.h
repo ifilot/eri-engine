@@ -19,6 +19,7 @@ SymmetricERITensor build_eri_tensor(const basis::BasisSet& basis)
 {
     const std::size_t n = basis.size();
 
+    // TODO: establish proper value for interpolation table from basis set
     eri::math::init_Fgamma_interp_table(4);
 
     // construct evaluator ONCE

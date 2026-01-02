@@ -51,7 +51,7 @@ HellsingCache1D HellsingCacheTable::build_kernel_1d(int l1,int l2,int l3,int l4)
                         const double t11 =
                             eri::math::sign_pow(o2+r1) *
                             eri::math::factorial(o1+o2) /
-                            (eri::math::ipow(4.0,i1+i2+r1) *
+                            (eri::math::inpow(4.0,i1+i2+r1) *
                              eri::math::factorial(i1) *
                              eri::math::factorial(i2) *
                              eri::math::factorial(o1) *
@@ -72,7 +72,7 @@ HellsingCache1D HellsingCacheTable::build_kernel_1d(int l1,int l2,int l3,int l4)
                                             const double t21 =
                                                 eri::math::sign_pow(o3+r2) *
                                                 eri::math::factorial(o3+o4) /
-                                                (eri::math::ipow(4.0,i3+i4+r2) *
+                                                (eri::math::inpow(4.0,i3+i4+r2) *
                                                  eri::math::factorial(i3) *
                                                  eri::math::factorial(i4) *
                                                  eri::math::factorial(o3) *
@@ -94,7 +94,7 @@ HellsingCache1D HellsingCacheTable::build_kernel_1d(int l1,int l2,int l3,int l4)
                                                 const double t3 =
                                                     eri::math::sign_pow(u) *
                                                     eri::math::factorial(mu) /
-                                                    (eri::math::ipow(4.0,u) *
+                                                    (eri::math::inpow(4.0,u) *
                                                      eri::math::factorial(u) *
                                                      eri::math::factorial(mu-2*u));
 
@@ -107,8 +107,8 @@ HellsingCache1D HellsingCacheTable::build_kernel_1d(int l1,int l2,int l3,int l4)
                                                     o1-i2-r1,        // a2
                                                     o4-i3-r2,        // a3
                                                     o3-i4-r2,        // a4
-                                                    2*(i1+i2)+r1,    // g1
-                                                    2*(i3+i4)+r2,    // g2
+                                                    2*(i1+i2)+r1-(l1+l2), // g1
+                                                    2*(i3+i4)+r2-(l3+l4), // g2
                                                     o1+o2-2*r1,      // x1
                                                     o3+o4-2*r2,      // x2
                                                     mu-u,            // eta

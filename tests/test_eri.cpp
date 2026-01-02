@@ -132,3 +132,34 @@ TEST_CASE("ERI Hellsing (STO-3G H2O)") {
 
     INFO("Verified unique ERIs: " << count);
 }
+
+TEST_CASE("ERI Hellsing Cached (STO-3G H2O)") {
+    auto basis = make_basis_h2o();
+    const std::size_t N = basis.size();
+    auto tetensor = eri::math::build_eri_tensor<eri::ops::two_electron::ERIHellsingCached>(basis);
+
+    const std::string fname = eri::utils::executable_dir() + "/h2o_eri.txt";
+
+    std::ifstream in(fname);
+    REQUIRE(in.good());
+
+    constexpr double tol = 1e-6;
+
+    double ref;
+    std::size_t count = 0;
+
+    for (std::size_t i = 0; i < N; ++i) {
+        for (std::size_t j = 0; j < N; ++j) {
+            for (std::size_t k = 0; k < N; ++k) {
+                for (std::size_t l = 0; l < N; ++l) {
+                    in >> ref;
+                    const double val = tetensor(i,j,k,l);
+                    CHECK(val == doctest::Approx(ref).epsilon(tol));
+                    ++count;
+                }
+            }
+        }
+    }
+
+    INFO("Verified unique ERIs: " << count);
+}
