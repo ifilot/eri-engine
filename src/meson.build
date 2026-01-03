@@ -17,6 +17,7 @@ sources += files(
 sources += files(
     'math/fgamma.cpp',
     'math/fgamma_interpolation.cpp',
+    'math/boys.cpp'
 )
 
 sources += files(

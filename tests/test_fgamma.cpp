@@ -6,6 +6,7 @@
 #include <limits>
 
 #include <eri/math/fgamma.h>
+#include <eri/math/boys.h>
 
 using eri::math::Fgamma_acc;
 using eri::math::Fgamma_nr;
@@ -338,4 +339,49 @@ TEST_CASE("Fgamma_acc preserves monotonicity for large nu and small T")
 
         prev = curr;
     }
+}
+
+TEST_CASE("Boys function")
+{
+    constexpr int nu_max = 12;
+    constexpr double T = 1;
+
+    for (int nu = 0; nu <= nu_max; ++nu) {
+        CHECK(eri::math::Fgamma_acc(nu, T) == doctest::Approx(eri::math::boys(nu, T)));
+    }
+}
+
+TEST_CASE("Fgamma_acc matches Gauss-Legendre quadrature (large nu, small T)")
+{
+    struct Case { int nu; double T; };
+    const std::vector<Case> cases = {
+        {10, 1e-12}, {20, 1e-12}, {30, 1e-12},
+        {10, 1e-8 }, {20, 1e-8 }, {30, 1e-8 },
+        {10, 1e-6 }, {20, 1e-6 }, {30, 1e-6 }
+    };
+
+    constexpr int N = 128; // increase to 256 if you want margin
+
+    double worst_abs = 0.0;
+    double worst_rel = 0.0;
+
+    for (const auto& c : cases) {
+        std::vector<double> F(c.nu+1, 0.0);
+        const double ref = eri::math::boys(c.nu, c.T);
+        const double quad = Fgamma_legendre(c.nu, c.T, N);
+
+        const double abs_err = std::abs(ref - quad);
+        const double rel_err =
+            abs_err / std::max(std::abs(ref), 1e-16);
+
+        worst_abs = std::max(worst_abs, abs_err);
+        worst_rel = std::max(worst_rel, rel_err);
+    }
+
+    INFO("Worst abs error = " << worst_abs);
+    INFO("Worst rel error = " << worst_rel);
+    INFO("Legendre N = " << N);
+
+    CHECK(worst_abs < 1e-15);
+    CHECK(worst_rel < 1e-14);
 }
